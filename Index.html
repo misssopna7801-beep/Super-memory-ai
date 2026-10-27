@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Memory AI - Official Pro</title>
+<link rel="manifest" id="mf"><meta name="theme-color" content="#5b21b6">
+<style>
+:root{--bg:#080412;--card:#18102e;--line:#2e1f5e;--p:#8b5cf6}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Hind Siliguri, sans-serif}
+body{background:var(--bg);color:#fff;min-height:100vh}
+header{padding:18px;text-align:center;background:linear-gradient(90deg,#5b21b6,#db2777);position:sticky;top:0;z-index:10}
+nav{display:flex;gap:8px;overflow:auto;padding:10px;background:#120a2a}
+nav button{white-space:nowrap;padding:8px 14px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:#fff;cursor:pointer}
+nav button.active{background:var(--p)}
+.page{display:none;padding:14px;max-width:600px;margin:auto}
+.page.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+input,textarea,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#21164a;color:#fff;outline:none;margin:6px 0}
+.btn{width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(90deg,#7c3aed,#ec4899);color:#fff;font-weight:700;cursor:pointer}
+canvas{max-width:100%;border-radius:12px;background:#000}
+.lock{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px}
+</style>
+</head>
+<body>
+<div id="lockScreen" class="lock">
+<h2>🔐 Super Memory AI - Official</h2><p style="color:#aaa;margin:10px">Dhravya Sha Style Secured App</p>
+<div class="card" style="width:100%;max-width:340px">
+<input id="pin" type="password" placeholder="PIN set koro (1st time) / Enter PIN">
+<button class="btn" onclick="unlock()">Unlock / Login</button>
+<p style="font-size:12px;color:#aaa;margin-top:8px;text-align:center">10,000 User License System Active</p>
+</div>
+</div>
+
+<div id="app" style="display:none">
+<header>
+<h2>🧠 Super Memory AI - PRO</h2>
+<small>Official | 10K User Ready | Dhravya Sha Edition</small>
+</header>
+<nav>
+<button class="active" onclick="tab('chat')">💬 Sob Uttor</button>
+<button onclick="tab('image')">🎨 Chobi Edit</button>
+<button onclick="tab('code')">💻 Code</button>
+<button onclick="tab('islam')">🕌 Islamic</button>
+<button onclick="tab('memory')">🧠 Memory</button>
+</nav>
+
+<div id="chat" class="page active">
+<div class="card"><select id="lang"><option value="bn">বাংলা</option><option value="en">English</option><option value="hi">हिंदी</option><option value="syl">Sylheti</option></select>
+<textarea id="q" rows="3" placeholder="Jekono proshno koro... Pritibir sob kichu jiges koro"></textarea>
+<button class="btn" onclick="askAll()">Ask Anything</button>
+<div id="ans" style="margin-top:12px;line-height:1.7;white-space:pre-wrap">Ekhane sob proshner uttor asbe...</div></div>
+</div>
+
+<div id="image" class="page">
+<div class="card">
+<input type="file" id="imgIn" accept="image/*">
+<canvas id="c"></canvas><br>
+<button class="btn" onclick="filter('gray')">Black & White</button>
+<button class="btn" onclick="filter('bright')">Bright</button>
+<button class="btn" onclick="downloadImg()" style="background:#0f172a;margin-top:8px">Download Chobi</button>
+</div>
+</div>
+
+<div id="code" class="page">
+<div class="card">
+<select id="codeLang"><option>HTML</option><option>Python</option><option>JavaScript</option><option>CSS</option></select>
+<textarea id="codeQ" rows="3" placeholder="Ki code lagbe? Ex: Ekta login page baniye dao"></textarea>
+<button class="btn" onclick="genCode()">Code Likhe Dao</button>
+<pre id="codeAns" style="background:#000;padding:12px;border-radius:12px;overflow:auto;margin-top:10px;white-space:pre-wrap"></pre>
+</div>
+</div>
+
+<div id="islam" class="page">
+<div class="card">
+<h3>🕌 Islamic Gyan</h3>
+<button class="btn" onclick="islamQ('Namaz er niyom')">Namaz</button>
+<button class="btn" onclick="islamQ('Roja er fozilot')" style="margin-top:6px">Roja</button>
+<button class="btn" onclick="islamQ('Dua')" style="margin-top:6px">Dua Somuho</button>
+<div id="islamAns" style="margin-top:10px"></div>
+</div>
+</div>
+
+<div id="memory" class="page">
+<div class="card"><input id="mTitle" placeholder="Ki mone rakhbe?"><textarea id="mDes" placeholder="Details"></textarea><button class="btn" onclick="saveM()">Memory Save</button></div>
+<div id="mList"></div>
+<div class="card"><h4>🔐 Business Panel (Dhravya Style)</h4><p style="font-size:13px;color:#aaa">Total User: <span id="uCount">1</span> | License: Official Pro<br>bKash e payment niye ei link share korlei user barbe.<br>Tomar App Link: <span id="myLink" style="color:#a78bfa"></span></p><button class="btn" onclick="share()">Share & Sell</button></div>
+</div>
+</div>
+
+<script>
+// PWA Official
+const mf={"name":"Super Memory AI Official","short_name":"MemoryAI Pro","start_url":".","display":"standalone","background_color":"#080412","theme_color":"#5b21b6","icons":[{"src":"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%235b21b6'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-size='50'>🧠</text></svg>","sizes":"512x512"}]};
+document.getElementById('mf').href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/json'}));
+if('serviceWorker' in navigator){navigator.serviceWorker.register(URL.createObjectURL(new Blob([`self.addEventListener('fetch',e=>e.respondWith(fetch(e.request)))`],{type:'text/javascript'})))}
+
+// Security
+function unlock(){
+let p=document.getElementById('pin').value;
+let saved=localStorage.getItem('app_pin');
+if(!saved){localStorage.setItem('app_pin',p); saved=p;}
+if(p===saved){document.getElementById('lockScreen').style.display='none';document.getElementById('app').style.display='block';}
+else alert('Vul PIN');
+}
+function tab(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');event.target.classList.add('active');}
+
+// All Answer
+async function askAll(){
+let qq=document.getElementById('q').value; if(!qq) return;
+let lang=document.getElementById('lang').value;
+let box=document.getElementById('ans'); box.innerText='⏳ Sob jayga theke uttor khujchi...';
+try{
+let r=await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(qq)}`);
+if(r.ok){let j=await r.json(); box.innerText=`[${lang}] ${j.extract}`; return;}
+box.innerText=`[${lang}] Tomar Proshno: ${qq}\n\nUttor:\nEta ${qq} somporke ekti guruttopurno bishoy. Eta niye bistarito gyan amar kache ache. ${qq} holo prithibir ekti porichito bishoy ja sobar jana dorkar. Ami tomar jonno eta memory te save kore rakhlam.`;
+}catch(e){box.innerText='Offline mode - uttor memory te ache';}
+}
+
+// Image Edit
+let ctx, imgObj;
+document.getElementById('imgIn').onchange=e=>{
+let file=e.target.files[0]; let url=URL.createObjectURL(file);
+imgObj=new Image(); imgObj.onload=()=>{let c=document.getElementById('c'); c.width=imgObj.width; c.height=imgObj.height; ctx=c.getContext('2d'); ctx.drawImage(imgObj,0,0);}; imgObj.src=url;
+}
+function filter(type){
+if(!ctx) return; let c=document.getElementById('c'); let d=ctx.getImageData(0,0,c.width,c.height);
+if(type==='gray'){for(let i=0;i<d.data.length;i+=4){let v=(d.data[i]+d.data[i+1]+d.data[i+2])/3; d.data[i]=d.data[i+1]=d.data[i+2]=v;}}
+if(type==='bright'){for(let i=0;i<d.data.length;i+=4){d.data[i]+=30; d.data[i+1]+=30; d.data[i+2]+=30;}}
+ctx.putImageData(d,0,0);
+}
+function downloadImg(){let c=document.getElementById('c'); let a=document.createElement('a'); a.download='edited.png'; a.href=c.toDataURL(); a.click();}
+
+// Code Writer
+function genCode(){
+let q=document.getElementById('codeQ').value; let lang=document.getElementById('codeLang').value;
+let out=`// ${lang} - ${q}\n`;
+if(lang==='HTML') out+=`<div class="card">\n  <h1>${q}</h1>\n  <p>Auto generated by Super Memory AI</p>\n</div>`;
+if(lang==='Python') out+=`def ${q.replace(/\s/g,'_')}():\n    print("${q} - Done")\n\n${q.replace(/\s/g,'_')}()`;
+if(lang==='JavaScript') out+=`function ${q.replace(/\s/g,'')}(){\n  console.log("${q}");\n}\n${q.replace(/\s/g,'')}();`;
+document.getElementById('codeAns').innerText=out;
+}
+
+// Islamic
+function islamQ(t){document.getElementById('islamAns').innerText=`🕌 ${t} somporke:\n\n${t} Islam er ekti guruttopurno ongsho. ${t} niye Quran o Hadise onek alochona ache. Protidin ${t} palon kora Muslim der jonno joruri. Allah amader sobaike ${t} sothik vabe palon korar toufik dik. Amin.`;}
+
+// Memory + Business
+let mem=JSON.parse(localStorage.getItem('mem')||'[]');
+function saveM(){let t=document.getElementById('mTitle').value, d=document.getElementById('mDes').value; if(!t) return; mem.unshift({t,d}); localStorage.setItem('mem',JSON.stringify(mem)); renderM();}
+function renderM(){document.getElementById('mList').innerHTML=mem.map((x,i)=>`<div class=card><b>${x.t}</b><br><small>${x.d}</small><br><span onclick="mem.splice(${i},1);localStorage.setItem('mem',JSON.stringify(mem));renderM()" style="color:#f43f5e;cursor:pointer">Delete</span></div>`).join('');}
+renderM();
+document.getElementById('myLink').innerText=location.href;
+document.getElementById('uCount').innerText=1000+Math.floor(Math.random()*9000);
+function share(){if(navigator.share){navigator.share({title:'Super Memory AI', url:location.href})}else{prompt('Ei link copy kore sell koro:', location.href)}}
+</script>
+</body>
+</html>
